@@ -1,0 +1,68 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                         http://www.springframework.org/schema/beans/spring-beans.xsd
+                         http://www.springframework.org/schema/tx 
+                         http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+                         http://www.springframework.org/schema/aop 
+                         http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+                         http://www.springframework.org/schema/context
+                         http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+
+  <!-- bind the process engine service as Spring Bean -->
+  <bean name="processEngineService" class="org.camunda.bpm.BpmPlatform" factory-method="getProcessEngineService" />
+
+  <!-- bind the default process engine as Spring Bean -->
+  <bean name="processEngine" factory-bean="processEngineService" factory-method="getDefaultProcessEngine" />
+
+  <bean id="repositoryService" factory-bean="processEngine" factory-method="getRepositoryService"/>
+  <bean id="runtimeService" factory-bean="processEngine" factory-method="getRuntimeService"/>
+  <bean id="taskService" factory-bean="processEngine" factory-method="getTaskService"/>
+  <bean id="historyService" factory-bean="processEngine" factory-method="getHistoryService"/>
+  <bean id="managementService" factory-bean="processEngine" factory-method="getManagementService"/>
+
+  <!-- bootstrap the process application -->
+  <bean id="processApplication" class="org.camunda.bpm.engine.spring.application.SpringServletProcessApplication" />
+
+  <context:annotation-config />
+
+  <!--  <bean class="org.camunda.bpm.getstarted.loanapproval.SpringServletProcessApplication" />-->
+  <bean id="calculateInterestService" class="org.camunda.bpm.getstarted.loanapproval.CalculateInterestService" />
+
+   <!-- Yahoo SMTP server properties -->
+<bean id="yahooMailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+        <property name="port" value="587"/>
+        <property name="host" value="smtp.mail.yahoo.com"/>        
+        <property name="username" value="urwitharup@yahoo.com"/>
+        <property name="password" value="Telstra@123"/>
+        <property name="javaMailProperties">
+            <props>
+                <prop key="mail.transport.protocol">smtp</prop>
+                <prop key="mail.smtp.auth">true</prop>
+                <prop key="mail.smtp.starttls.enable">true</prop>
+                <prop key="mail.debug">true</prop>
+            </props>
+        </property>
+</bean>
+
+<!-- Our main class to send email --> 
+<bean id="sendEmail" class="org.camunda.bpm.getstarted.loanapproval.SendEmail">  
+   
+    <property name="yahooMailSender" ref="yahooMailSender" />
+    <property name="sendMailFromYahoo" ref="sendMailFromYahoo" />
+      
+</bean>
+
+<!-- Pre configured mail properties to send mail from yahoo -->
+<bean id="sendMailFromYahoo" class="org.springframework.mail.SimpleMailMessage"> 
+    <property name="subject" value="Send email from yahoo"/>
+    <property name="to" value="urwitharup@yahoo.com"></property>
+    <property name="from" value="urwitharup@yahoo.com"></property>
+    <property name="text" value="Mail from spring framwork."></property>    
+         
+</bean>
+
+</beans>

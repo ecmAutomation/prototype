@@ -1,0 +1,3 @@
+org/camunda/bpm/getstarted/loanapproval/CalculateInterestService.class
+org/camunda/bpm/getstarted/loanapproval/SendEmail.class
+org/camunda/bpm/getstarted/loanapproval/SpringServletProcessApplication.class

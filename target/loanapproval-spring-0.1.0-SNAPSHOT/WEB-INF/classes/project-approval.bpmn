@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd" id="_DdZocL47EeOQo_IRkjDF6w" exporter="camunda modeler" exporterVersion="2.5.0" targetNamespace="http://activiti.org/bpmn">
+  <bpmn2:process id="loanApproval" name="Loan Approval" isExecutable="true">
+    <bpmn2:startEvent id="StartEvent_1" name="Project Request&#xD;&#xA;Received">
+      <bpmn2:outgoing>SequenceFlow_3</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:sequenceFlow id="SequenceFlow_3" name="" sourceRef="StartEvent_1" targetRef="validateProject"/>
+    <bpmn2:userTask id="validateProject" camunda:candidateGroups="Project Manager" name="Validate Project">
+      <bpmn2:incoming>SequenceFlow_3</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_4</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:sequenceFlow id="SequenceFlow_4" name="" sourceRef="validateProject" targetRef="ServiceTask_1"/>
+    <bpmn2:serviceTask id="ServiceTask_1" camunda:delegateExpression="${calculateInterestService}" name="Derive Job ID">
+      <bpmn2:incoming>SequenceFlow_4</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_1</bpmn2:outgoing>
+    </bpmn2:serviceTask>
+    <bpmn2:sequenceFlow id="SequenceFlow_1" name="" sourceRef="ServiceTask_1" targetRef="allocateEngineer"/>
+    <bpmn2:userTask id="allocateEngineer" camunda:candidateGroups="Work Dispatcher" name="Allocate Engineer">
+      <bpmn2:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="jobID" label="JOB ID" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly"/>
+            </camunda:validation>
+          </camunda:formField>
+        </camunda:formData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_1</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_2</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:serviceTask id="ServiceTask_2" camunda:delegateExpression="${sendEmail}" name="Send Email">
+      <bpmn2:incoming>SequenceFlow_2</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_6</bpmn2:outgoing>
+    </bpmn2:serviceTask>
+    <bpmn2:sequenceFlow id="SequenceFlow_2" name="" sourceRef="allocateEngineer" targetRef="ServiceTask_2"/>
+    <bpmn2:endEvent id="EndEvent_1" name="Project Completed">
+      <bpmn2:incoming>SequenceFlow_6</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:sequenceFlow id="SequenceFlow_6" name="" sourceRef="ServiceTask_2" targetRef="EndEvent_1"/>
+  </bpmn2:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="loanApproval">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_3" bpmnElement="StartEvent_1">
+        <dc:Bounds height="36.0" width="36.0" x="48.0" y="89.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="30.0" width="72.0" x="30.0" y="130.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_ServiceTask_5" bpmnElement="ServiceTask_1">
+        <dc:Bounds height="80.0" width="100.0" x="372.0" y="68.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_EndEvent_3" bpmnElement="EndEvent_1">
+        <dc:Bounds height="36.0" width="36.0" x="841.0" y="189.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="18.0" width="78.0" x="820.0" y="230.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_UserTask_13" bpmnElement="validateProject">
+        <dc:Bounds height="80.0" width="100.0" x="216.0" y="67.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_3" bpmnElement="SequenceFlow_3" sourceElement="_BPMNShape_StartEvent_3" targetElement="_BPMNShape_UserTask_13">
+        <di:waypoint xsi:type="dc:Point" x="84.0" y="107.0"/>
+        <di:waypoint xsi:type="dc:Point" x="216.0" y="107.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="6.0" width="6.0" x="135.0" y="107.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_4" bpmnElement="SequenceFlow_4" sourceElement="_BPMNShape_UserTask_13" targetElement="_BPMNShape_ServiceTask_5">
+        <di:waypoint xsi:type="dc:Point" x="316.0" y="107.0"/>
+        <di:waypoint xsi:type="dc:Point" x="344.0" y="107.0"/>
+        <di:waypoint xsi:type="dc:Point" x="344.0" y="108.0"/>
+        <di:waypoint xsi:type="dc:Point" x="372.0" y="108.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="6.0" width="6.0" x="342.0" y="108.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_UserTask_14" bpmnElement="allocateEngineer">
+        <dc:Bounds height="80.0" width="100.0" x="528.0" y="67.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_1" bpmnElement="SequenceFlow_1" sourceElement="_BPMNShape_ServiceTask_5" targetElement="_BPMNShape_UserTask_14">
+        <di:waypoint xsi:type="dc:Point" x="472.0" y="108.0"/>
+        <di:waypoint xsi:type="dc:Point" x="500.0" y="108.0"/>
+        <di:waypoint xsi:type="dc:Point" x="500.0" y="107.0"/>
+        <di:waypoint xsi:type="dc:Point" x="528.0" y="107.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="6.0" width="6.0" x="501.0" y="107.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_ServiceTask_7" bpmnElement="ServiceTask_2">
+        <dc:Bounds height="80.0" width="100.0" x="678.0" y="167.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_2" bpmnElement="SequenceFlow_2" sourceElement="_BPMNShape_UserTask_14" targetElement="_BPMNShape_ServiceTask_7">
+        <di:waypoint xsi:type="dc:Point" x="628.0" y="107.0"/>
+        <di:waypoint xsi:type="dc:Point" x="653.0" y="107.0"/>
+        <di:waypoint xsi:type="dc:Point" x="653.0" y="207.0"/>
+        <di:waypoint xsi:type="dc:Point" x="678.0" y="207.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_6" bpmnElement="SequenceFlow_6" sourceElement="_BPMNShape_ServiceTask_7" targetElement="_BPMNShape_EndEvent_3">
+        <di:waypoint xsi:type="dc:Point" x="778.0" y="207.0"/>
+        <di:waypoint xsi:type="dc:Point" x="841.0" y="207.0"/>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>
